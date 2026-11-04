@@ -1,5 +1,5 @@
-const app = require('./src/app');
-const pool = require('./src/config/db');
+const app = require('./app');
+const pool = require('./config/db');
 
 async function runTestSuite() {
   console.log('====================================================');
@@ -10,6 +10,25 @@ async function runTestSuite() {
   const BASE_URL = 'http://localhost:5098/api';
 
   try {
+    // Limpieza preventiva de datos de pruebas previas
+    await pool.query(`
+      DELETE FROM detalle_movimientos 
+      WHERE id_movimiento IN (
+        SELECT id_movimiento FROM movimientos 
+        WHERE id_cliente IN (SELECT id_cliente FROM clientes WHERE identificacion IN ('9-0011-2233', '3-101-998877'))
+      )
+    `);
+    await pool.query(`
+      DELETE FROM movimientos 
+      WHERE id_cliente IN (SELECT id_cliente FROM clientes WHERE identificacion IN ('9-0011-2233', '3-101-998877'))
+    `);
+    await pool.query("DELETE FROM clientes WHERE identificacion IN ('9-0011-2233', '3-101-998877');");
+    await pool.query(`
+      DELETE FROM detalle_movimientos 
+      WHERE id_producto IN (SELECT id_producto FROM productos WHERE nombre = 'Producto Test Control Stock')
+    `);
+    await pool.query("DELETE FROM productos WHERE nombre = 'Producto Test Control Stock';");
+
     // 1. Verificar existencia de la base de datos y 6 tablas
     console.log('\n--- 1. Verificando Base de Datos y Tablas ---');
     const [tables] = await pool.query('SHOW TABLES IN stockpro;');

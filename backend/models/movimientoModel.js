@@ -1,18 +1,10 @@
 const pool = require('../config/db');
 
-// Helper to determine the stock change delta of a detail item based on movement type
 function calculateStockDelta(tipo, cantidad) {
   const cant = Number(cantidad);
-  if (tipo === 'entrada') {
-    return Math.abs(cant);
-  }
-  if (tipo === 'salida') {
-    return -Math.abs(cant);
-  }
-  if (tipo === 'ajuste') {
-    // Para ajuste interno, la cantidad puede ser positiva (+ agrega stock) o negativa (- reduce stock)
-    return cant;
-  }
+  if (tipo === 'entrada') return Math.abs(cant);
+  if (tipo === 'salida') return -Math.abs(cant);
+  if (tipo === 'ajuste') return cant;
   return 0;
 }
 
@@ -111,7 +103,6 @@ const movimientoModel = {
     try {
       await connection.beginTransaction();
 
-      // Validar y acumular deltas por producto para evitar condiciones de carrera si el mismo producto viene más de una vez
       const deltasPorProducto = {};
       for (const item of detalles) {
         const idProd = Number(item.id_producto);
@@ -123,7 +114,6 @@ const movimientoModel = {
         deltasPorProducto[idProd] = (deltasPorProducto[idProd] || 0) + delta;
       }
 
-      // Bloquear y validar productos con FOR UPDATE
       const productIds = Object.keys(deltasPorProducto).map(Number);
       const [productos] = await connection.query(
         `SELECT id_producto, nombre, stock FROM productos WHERE id_producto IN (?) FOR UPDATE`,
@@ -148,7 +138,6 @@ const movimientoModel = {
         }
       }
 
-      // 1. Insertar el movimiento
       const fechaMovimiento = fecha ? new Date(fecha) : new Date();
       const [movResult] = await connection.query(
         `INSERT INTO movimientos (id_cliente, fecha, tipo, observacion)
@@ -163,7 +152,6 @@ const movimientoModel = {
 
       const idMovimiento = movResult.insertId;
 
-      // 2. Insertar detalles y actualizar stock de productos
       for (const item of detalles) {
         const idProd = Number(item.id_producto);
         const cant = Number(item.cantidad);
@@ -175,7 +163,6 @@ const movimientoModel = {
         );
       }
 
-      // Aplicar actualización de stock acumulada
       for (const idProd of productIds) {
         const delta = deltasPorProducto[idProd];
         await connection.query(
@@ -203,7 +190,6 @@ const movimientoModel = {
     try {
       await connection.beginTransaction();
 
-      // 1. Obtener movimiento existente
       const [existingRows] = await connection.query(
         'SELECT * FROM movimientos WHERE id_movimiento = ? FOR UPDATE',
         [id]
@@ -213,23 +199,18 @@ const movimientoModel = {
       }
       const oldMov = existingRows[0];
 
-      // 2. Obtener detalles antiguos
       const [oldDetails] = await connection.query(
         'SELECT * FROM detalle_movimientos WHERE id_movimiento = ?',
         [id]
       );
 
-      // Calcular revertido del movimiento anterior
-      // Para revertir: revertDelta = -1 * calculateStockDelta(oldMov.tipo, oldDet.cantidad)
       const stockDeltas = {};
-
       for (const oldDet of oldDetails) {
         const idProd = oldDet.id_producto;
         const revertDelta = -calculateStockDelta(oldMov.tipo, oldDet.cantidad);
         stockDeltas[idProd] = (stockDeltas[idProd] || 0) + revertDelta;
       }
 
-      // Calcular efecto de los nuevos detalles
       for (const item of detalles) {
         const idProd = Number(item.id_producto);
         const cant = Number(item.cantidad);
@@ -240,7 +221,6 @@ const movimientoModel = {
         stockDeltas[idProd] = (stockDeltas[idProd] || 0) + newDelta;
       }
 
-      // Bloquear y validar productos con FOR UPDATE
       const allProductIds = Object.keys(stockDeltas).map(Number);
       if (allProductIds.length > 0) {
         const [productos] = await connection.query(
@@ -267,7 +247,6 @@ const movimientoModel = {
         }
       }
 
-      // 3. Reemplazar detalles
       await connection.query('DELETE FROM detalle_movimientos WHERE id_movimiento = ?', [id]);
 
       for (const item of detalles) {
@@ -278,7 +257,6 @@ const movimientoModel = {
         );
       }
 
-      // 4. Aplicar los deltas de stock netos
       for (const idProd of allProductIds) {
         const delta = stockDeltas[idProd];
         if (delta !== 0) {
@@ -289,7 +267,6 @@ const movimientoModel = {
         }
       }
 
-      // 5. Actualizar cabecera del movimiento
       await connection.query(
         `UPDATE movimientos
          SET id_cliente = ?, fecha = ?, tipo = ?, observacion = ?
@@ -332,7 +309,6 @@ const movimientoModel = {
         [id]
       );
 
-      // Revertir efecto de cada detalle en el inventario
       const revertDeltas = {};
       for (const det of detalles) {
         const idProd = det.id_producto;
@@ -363,7 +339,6 @@ const movimientoModel = {
           }
         }
 
-        // Aplicar la reversión de stock
         for (const idProd of productIds) {
           const delta = revertDeltas[idProd];
           if (delta !== 0) {
@@ -375,7 +350,6 @@ const movimientoModel = {
         }
       }
 
-      // Eliminar detalles y movimiento (ON DELETE CASCADE también está en BD)
       await connection.query('DELETE FROM detalle_movimientos WHERE id_movimiento = ?', [id]);
       const [delResult] = await connection.query('DELETE FROM movimientos WHERE id_movimiento = ?', [id]);
 

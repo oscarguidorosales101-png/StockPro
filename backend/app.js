@@ -14,6 +14,10 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const movimientoRoutes = require('./routes/movimientoRoutes');
 const detalleMovimientoRoutes = require('./routes/detalleMovimientoRoutes');
 
+// Importar middlewares
+const errorHandler = require('./middlewares/errorHandler');
+const notFoundHandler = require('./middlewares/notFoundHandler');
+
 const app = express();
 
 // Middlewares globales
@@ -50,40 +54,9 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/movimientos', movimientoRoutes);
 app.use('/api/detalle-movimientos', detalleMovimientoRoutes);
 
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`
-  });
-});
-
-// Manejador global de errores
-app.use((err, req, res, next) => {
-  console.error('Error global no controlado:', err);
-  res.status(500).json({
-    success: false,
-    message: 'Ocurrió un error interno en el servidor.',
-    error: err.message
-  });
-});
-
-const PORT = process.env.PORT || 5000;
-
-if (require.main === module) {
-  // Probar conexión a la base de datos antes de iniciar
-  pool.query('SELECT 1')
-    .then(() => {
-      console.log('✅ Conexión a base de datos MySQL establecida correctamente.');
-      app.listen(PORT, () => {
-        console.log(`🚀 Servidor backend de StockPro escuchando en http://localhost:${PORT}`);
-      });
-    })
-    .catch((err) => {
-      console.error('❌ Error fatal al conectar con la base de datos MySQL:', err.message);
-      process.exit(1);
-    });
-}
+// Manejo de rutas no encontradas y manejador centralizado de errores
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 module.exports = app;
 

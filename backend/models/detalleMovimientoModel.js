@@ -160,9 +160,7 @@ const detalleMovimientoModel = {
       );
       const tipo = movRows[0].tipo;
 
-      // Revertir efecto anterior
       const revertDelta = -calculateStockDelta(tipo, oldDet.cantidad);
-      // Aplicar nuevo efecto
       const newDelta = calculateStockDelta(tipo, newCant);
 
       if (oldDet.id_producto === newProdId) {
@@ -180,7 +178,6 @@ const detalleMovimientoModel = {
 
         await connection.query('UPDATE productos SET stock = ? WHERE id_producto = ?', [finalStock, newProdId]);
       } else {
-        // Revertir producto anterior
         const [oldProdRows] = await connection.query(
           'SELECT stock, nombre FROM productos WHERE id_producto = ? FOR UPDATE',
           [oldDet.id_producto]
@@ -192,7 +189,6 @@ const detalleMovimientoModel = {
         }
         await connection.query('UPDATE productos SET stock = ? WHERE id_producto = ?', [oldProdFinalStock, oldDet.id_producto]);
 
-        // Aplicar a nuevo producto
         const [newProdRows] = await connection.query(
           'SELECT stock, nombre FROM productos WHERE id_producto = ? FOR UPDATE',
           [newProdId]
@@ -234,7 +230,6 @@ const detalleMovimientoModel = {
       }
       const det = detRows[0];
 
-      // Verificar que el movimiento no se quede con 0 detalles
       const [countRows] = await connection.query(
         'SELECT COUNT(*) as count FROM detalle_movimientos WHERE id_movimiento = ?',
         [det.id_movimiento]

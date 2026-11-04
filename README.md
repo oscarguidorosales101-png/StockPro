@@ -277,34 +277,40 @@ La conexión se gestiona en [backend/config/db.js](file:///c:/Users/Foward/Deskt
 
 ## Pruebas Automatizadas
 
-El proyecto incluye una suite de pruebas de integración en [backend/test_suite.js](file:///c:/Users/Foward/Desktop/mini-proyecto/StockPro/backend/test_suite.js).
+El proyecto incluye dos suites automatizadas de integración y auditoría integral en `backend/`:
+- `backend/test_suite.js`: Verificación relacional de 7 etapas con control transaccional de stock.
+- `backend/audit_runner.js`: Auditoría exhaustiva de 46 aserciones que valida todas las rutas REST (GET, GET/:id, POST, PUT, DELETE) en las seis entidades, persistencia de formularios y pruebas HTTP estilo Postman/Thunder Client.
 
-Para ejecutarla:
+Para ejecutarlas:
 ```bash
 cd backend
-npm test
+npm test          # Ejecuta ambas suites de prueba consecutivamente
+npm run audit     # Ejecuta la auditoría integral de 46 aserciones
 ```
 
 Verifica:
 1. Existencia de base de datos `stockpro` y sus 6 tablas.
 2. Claves foráneas e integridad referencial en el catálogo de MySQL.
-3. Operaciones CRUD en todas las entidades.
+3. Operaciones CRUD (GET, GET/:id, POST, PUT, DELETE) en las seis entidades.
 4. Rechazo de cédulas duplicadas (`HTTP 400`).
 5. Aumento de existencias en entradas y reducción en salidas.
 6. Rechazo de salidas sobregiradas (`HTTP 400`) y conservación del stock sin cambios parciales.
-7. Reversión íntegra de inventario al eliminar movimientos.
+7. Reversión íntegra de inventario al eliminar movimientos o detalles.
 8. Bloqueo de eliminación de entidades con relaciones dependientes.
+9. Llamadas cliente REST estilo Postman y Thunder Client respondiendo HTTP 200/201 en JSON.
 
 ---
 
-## Documentación Académica
+## Documentación Académica y Colecciones de API
 
-En la carpeta [`docs/`](docs/) se encuentran disponibles los entregables académicos del proyecto:
+En la carpeta [`docs/`](docs/) se encuentran disponibles los entregables académicos del proyecto y colecciones listas para importar:
 
 - [docs/idea-empresarial.md](docs/idea-empresarial.md): Justificación empresarial, contexto del negocio, objetivos y beneficios operativos.
 - [docs/modelo-entidad-relacion.md](docs/modelo-entidad-relacion.md): Diccionario de datos exhaustivo, claves foráneas, reglas de negocio y diagrama Mermaid.
 - [docs/StockPro.drawio](docs/StockPro.drawio): Diagrama Entidad-Relación editable en formato XML estándar de draw.io.
 - [docs/cumplimiento-academico.md](docs/cumplimiento-academico.md): Matriz de correspondencia con los criterios y rúbrica de evaluación del Mini Proyecto 1 (Día 1).
+- [docs/StockPro.postman_collection.json](docs/StockPro.postman_collection.json): Colección de endpoints REST exportada y lista para importar directamente en **Postman**.
+- [docs/StockPro.thunder_collection.json](docs/StockPro.thunder_collection.json): Colección de endpoints lista para importar en la extensión **Thunder Client** de Visual Studio Code.(Día 1).
 
 ---
 

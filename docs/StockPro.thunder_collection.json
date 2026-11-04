@@ -1,0 +1,107 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "StockPro API",
+  "collectionId": "stockpro-tc-2026",
+  "dateExported": "2026-11-04",
+  "version": "1.1",
+  "folders": [
+    { "_id": "f_health", "name": "Health Check" },
+    { "_id": "f_categorias", "name": "Categorias" },
+    { "_id": "f_clientes", "name": "Clientes" },
+    { "_id": "f_productos", "name": "Productos" },
+    { "_id": "f_proveedores", "name": "Proveedores" },
+    { "_id": "f_movimientos", "name": "Movimientos" },
+    { "_id": "f_detalles", "name": "Detalle Movimientos" }
+  ],
+  "requests": [
+    {
+      "_id": "req_health",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_health",
+      "name": "Health Check",
+      "url": "http://localhost:5000/api/health",
+      "method": "GET"
+    },
+    {
+      "_id": "req_cat_get",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_categorias",
+      "name": "GET Categorias",
+      "url": "http://localhost:5000/api/categorias",
+      "method": "GET"
+    },
+    {
+      "_id": "req_cat_post",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_categorias",
+      "name": "POST Categoria",
+      "url": "http://localhost:5000/api/categorias",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nombre\": \"Ferretería y Herramientas\",\n  \"descripcion\": \"Tornillería y accesorios\",\n  \"estado\": true\n}"
+      }
+    },
+    {
+      "_id": "req_cli_get",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_clientes",
+      "name": "GET Clientes",
+      "url": "http://localhost:5000/api/clientes?tipo_cliente=empresa",
+      "method": "GET"
+    },
+    {
+      "_id": "req_cli_post",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_clientes",
+      "name": "POST Cliente Empresa",
+      "url": "http://localhost:5000/api/clientes",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"tipo_cliente\": \"empresa\",\n  \"nombre\": \"Corporación Logística del Pacífico S.A.\",\n  \"identificacion\": \"3-101-889900\",\n  \"telefono\": \"+506 2500-1122\",\n  \"correo\": \"proveeduria@logistica.cr\",\n  \"direccion\": \"Puntarenas, Caldera\",\n  \"estado\": true\n}"
+      }
+    },
+    {
+      "_id": "req_prod_get",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_productos",
+      "name": "GET Productos",
+      "url": "http://localhost:5000/api/productos",
+      "method": "GET"
+    },
+    {
+      "_id": "req_prod_post",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_productos",
+      "name": "POST Producto",
+      "url": "http://localhost:5000/api/productos",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"id_categoria\": 1,\n  \"id_proveedor\": 1,\n  \"nombre\": \"Azúcar Blanco 1kg\",\n  \"descripcion\": \"Calidad extra\",\n  \"precio\": 950.00,\n  \"stock\": 50\n}"
+      }
+    },
+    {
+      "_id": "req_mov_get",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_movimientos",
+      "name": "GET Movimientos",
+      "url": "http://localhost:5000/api/movimientos",
+      "method": "GET"
+    },
+    {
+      "_id": "req_mov_post",
+      "colId": "stockpro-tc-2026",
+      "containerId": "f_movimientos",
+      "name": "POST Movimiento Salida",
+      "url": "http://localhost:5000/api/movimientos",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"tipo\": \"salida\",\n  \"id_cliente\": 3,\n  \"observacion\": \"Venta institucional\",\n  \"detalles\": [\n    { \"id_producto\": 1, \"cantidad\": 5 }\n  ]\n}"
+      }
+    }
+  ]
+}
+

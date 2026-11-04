@@ -37,8 +37,9 @@
 ### 2.3. Entregables del Día 1
 - [x] **Documento breve de justificación empresarial:** [docs/idea-empresarial.md](idea-empresarial.md).
 - [x] **Diagrama del modelo de datos:** [docs/modelo-entidad-relacion.md](modelo-entidad-relacion.md) y archivo interactivo [docs/StockPro.drawio](StockPro.drawio).
+- [x] **Colecciones de prueba de API:** Archivos listos para importación inmediata en Postman ([docs/StockPro.postman_collection.json](StockPro.postman_collection.json)) y en Thunder Client de VS Code ([docs/StockPro.thunder_collection.json](StockPro.thunder_collection.json)).
 - [x] **Estructura de repositorio organizada:** Repositorio Git limpio, `.gitignore` seguro y `README.md` exhaustivo.
-- [x] **Servidor Node.js funcionando y probado:** Suite de pruebas automatizadas ejecutable mediante `npm test` en `backend/` con 100% de aserciones aprobadas.
+- [x] **Servidor Node.js funcionando y probado:** Suite de pruebas automatizadas ejecutable mediante `npm test` en `backend/` con 100% de aserciones aprobadas (46 aserciones de auditoría integral + 7 etapas de verificación relacional).
 
 ---
 
@@ -105,5 +106,65 @@ DELETE categoría con productos: 400 (Bloqueado por regla referencial)
 ====================================================
 🎉 TODAS LAS PRUEBAS DE VERIFICACIÓN PASARON CON ÉXITO
 ====================================================
+```
+
+### 4.2. Evidencia de Auditoría Integral (46 Aserciones — `audit_runner.js`)
+
+Se ejecutó la batería exhaustiva de rutas REST completas, persistencia en MySQL, movimientos de inventario y pruebas estilo Thunder Client / Postman:
+
+```text
+================================================================
+🔍 INICIANDO AUDITORÍA FINAL INTEGRAL DE STOCKPRO
+================================================================
+  ✅ [PASS] POST /api/categorias crea una nueva categoría con código 201
+  ✅ [PASS] GET /api/categorias lista todas las categorías con código 200
+  ✅ [PASS] GET /api/categorias/:id obtiene la categoría por su ID con código 200
+  ✅ [PASS] PUT /api/categorias/:id actualiza la categoría y persiste el estado en MySQL con código 200
+  ✅ [PASS] POST /api/proveedores crea un nuevo proveedor con código 201
+  ✅ [PASS] GET /api/proveedores lista proveedores con código 200
+  ✅ [PASS] GET /api/proveedores/:id obtiene el proveedor por ID con código 200
+  ✅ [PASS] PUT /api/proveedores/:id actualiza el proveedor con código 200
+  ✅ [PASS] POST /api/productos crea un nuevo producto con código 201
+  ✅ [PASS] GET /api/productos lista productos con código 200
+  ✅ [PASS] GET /api/productos/:id obtiene producto por ID con código 200
+  ✅ [PASS] PUT /api/productos/:id actualiza el producto en MySQL con código 200
+  ✅ [PASS] POST /api/clientes registra persona física con código 201
+  ✅ [PASS] POST /api/clientes registra empresa jurídica con código 201
+  ✅ [PASS] GET /api/clientes filtra correctamente por tipo de cliente con código 200
+  ✅ [PASS] GET /api/clientes/:id obtiene cliente por ID con código 200
+  ✅ [PASS] PUT /api/clientes/:id actualiza cliente con código 200
+  ✅ [PASS] PATCH /api/clientes/:id/estado conmuta el estado activo/inactivo con código 200
+  ✅ [PASS] POST /api/movimientos registra entrada con código 201
+  ✅ [PASS] El movimiento de entrada incrementa el stock de 40 a 60 en MySQL
+  ✅ [PASS] GET /api/movimientos lista movimientos con código 200
+  ✅ [PASS] GET /api/movimientos/:id retorna el movimiento con sus detalles y código 200
+  ✅ [PASS] PUT /api/movimientos/:id actualiza el movimiento y recalcula el stock
+  ✅ [PASS] La edición del movimiento recalculó el stock a 70 en MySQL
+  ✅ [PASS] POST /api/detalle-movimientos crea un nuevo detalle con código 201
+  ✅ [PASS] El detalle creado actualizó el stock del segundo producto (15 -> 25) en MySQL
+  ✅ [PASS] GET /api/detalle-movimientos lista los detalles del movimiento con código 200
+  ✅ [PASS] GET /api/detalle-movimientos/:id obtiene el detalle específico con código 200
+  ✅ [PASS] PUT /api/detalle-movimientos/:id actualiza cantidad y stock con código 200
+  ✅ [PASS] La actualización del detalle recalculó el stock (15 + 15 = 30) en MySQL
+  ✅ [PASS] DELETE /api/detalle-movimientos/:id elimina el detalle y revierte stock con código 200
+  ✅ [PASS] Eliminar el detalle revirtió el stock del producto 2 a su valor original (15)
+  ✅ [PASS] POST /api/movimientos registra salida vinculada a cliente empresa con código 201
+  ✅ [PASS] La salida de inventario redujo el stock de 70 a 45 en MySQL
+  ✅ [PASS] La salida que excede el stock se rechaza con código 400 y mensaje explicativo
+  ✅ [PASS] La transacción fallida no alteró el stock en MySQL
+  ✅ [PASS] DELETE /api/movimientos/:id elimina la salida y revierte el stock con código 200
+  ✅ [PASS] Reversión atómica de inventario confirmada: stock volvió a 70 en MySQL
+  ✅ [PASS] Eliminar la entrada devolvió el stock al saldo inicial de 40 en MySQL
+  ✅ [PASS] DELETE /api/productos/:id elimina productos sin movimientos con código 200
+  ✅ [PASS] DELETE /api/clientes/:id elimina clientes sin movimientos asociados con código 200
+  ✅ [PASS] DELETE /api/proveedores/:id elimina proveedor sin productos vinculados con código 200
+  ✅ [PASS] DELETE /api/categorias/:id elimina categoría sin productos vinculados con código 200
+  ✅ [PASS] [Thunder Client] GET /api/clientes responde HTTP 200 y application/json
+  ✅ [PASS] [Thunder Client] GET /api/clientes retorna lista de clientes corporativos
+  ✅ [PASS] [Postman] POST /api/clientes registra cliente con HTTP 201 y cuerpo JSON validado
+================================================================
+🎉 AUDITORÍA FINALIZADA CON ÉXITO: 46/46 verificaciones pasadas.
+================================================================
+```
 ```
 

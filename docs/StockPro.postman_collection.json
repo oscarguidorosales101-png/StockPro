@@ -1,0 +1,399 @@
+{
+  "info": {
+    "_postman_id": "stockpro-collection-2026",
+    "name": "StockPro API - Colección Oficial",
+    "description": "Colección de endpoints REST para StockPro (Inventarios y Clientes). Compatible con Postman y Thunder Client.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Categorias",
+      "item": [
+        {
+          "name": "GET /categorias (Listar todas)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": ["{{baseUrl}}"],
+              "path": ["categorias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /categorias/:id (Obtener por ID)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["categorias", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /categorias (Crear categoría)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ferretería y Herramientas\",\n  \"descripcion\": \"Tornillería, herramientas manuales y accesorios\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categorias",
+              "host": ["{{baseUrl}}"],
+              "path": ["categorias"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /categorias/:id (Actualizar categoría)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Ferretería General\",\n  \"descripcion\": \"Herramientas actualizadas\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categorias/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["categorias", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /categorias/:id (Eliminar categoría)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categorias/999",
+              "host": ["{{baseUrl}}"],
+              "path": ["categorias", "999"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Clientes",
+      "item": [
+        {
+          "name": "GET /clientes (Listar todos con filtros)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes?tipo_cliente=empresa",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes"],
+              "query": [
+                { "key": "tipo_cliente", "value": "empresa" }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /clientes/:id (Obtener por ID)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /clientes (Registrar persona)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo_cliente\": \"persona\",\n  \"nombre\": \"Esteban Chaves Monge\",\n  \"identificacion\": \"1-1988-0456\",\n  \"telefono\": \"+506 8899-7711\",\n  \"correo\": \"esteban.chaves@correo.cr\",\n  \"direccion\": \"San José, Sabana Norte\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /clientes (Registrar empresa)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo_cliente\": \"empresa\",\n  \"nombre\": \"Corporación Logística del Pacífico S.A.\",\n  \"identificacion\": \"3-101-889900\",\n  \"telefono\": \"+506 2500-1122\",\n  \"correo\": \"proveeduria@logistica.cr\",\n  \"direccion\": \"Puntarenas, Puerto Caldera, Muelle 2\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clientes",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /clientes/:id (Actualizar cliente)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo_cliente\": \"persona\",\n  \"nombre\": \"Carlos Alberto Méndez Rojas\",\n  \"identificacion\": \"1-1452-0987\",\n  \"telefono\": \"+506 8811-9999\",\n  \"correo\": \"carlos.mendez.actualizado@gmail.com\",\n  \"direccion\": \"San José, Barrio Dent\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/clientes/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /clientes/:id/estado (Alternar estado)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/clientes/1/estado",
+              "host": ["{{baseUrl}}"],
+              "path": ["clientes", "1", "estado"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Proveedores",
+      "item": [
+        {
+          "name": "GET /proveedores (Listar todos)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/proveedores",
+              "host": ["{{baseUrl}}"],
+              "path": ["proveedores"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /proveedores (Crear proveedor)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Importadora Comercial del Sur Ltda.\",\n  \"telefono\": \"+506 2771-4455\",\n  \"correo\": \"pedidos@comercialdelsur.cr\",\n  \"direccion\": \"Pérez Zeledón, San Isidro\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/proveedores",
+              "host": ["{{baseUrl}}"],
+              "path": ["proveedores"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Productos",
+      "item": [
+        {
+          "name": "GET /productos (Listar inventario)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /productos (Crear producto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id_categoria\": 1,\n  \"id_proveedor\": 1,\n  \"nombre\": \"Azúcar Blanco Especial 1kg\",\n  \"descripcion\": \"Azúcar refinado calidad de exportación\",\n  \"precio\": 950.00,\n  \"stock\": 50\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Movimientos",
+      "item": [
+        {
+          "name": "GET /movimientos (Listar kardex)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/movimientos",
+              "host": ["{{baseUrl}}"],
+              "path": ["movimientos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /movimientos (Entrada de inventario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"entrada\",\n  \"id_cliente\": null,\n  \"observacion\": \"Compra de reabastecimiento\",\n  \"detalles\": [\n    { \"id_producto\": 1, \"cantidad\": 20 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/movimientos",
+              "host": ["{{baseUrl}}"],
+              "path": ["movimientos"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /movimientos (Salida asociada a cliente)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"salida\",\n  \"id_cliente\": 3,\n  \"observacion\": \"Venta institucional de contado\",\n  \"detalles\": [\n    { \"id_producto\": 1, \"cantidad\": 10 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/movimientos",
+              "host": ["{{baseUrl}}"],
+              "path": ["movimientos"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Detalle Movimientos",
+      "item": [
+        {
+          "name": "GET /detalle-movimientos (Listar detalles)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/detalle-movimientos?id_movimiento=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["detalle-movimientos"],
+              "query": [
+                { "key": "id_movimiento", "value": "1" }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+

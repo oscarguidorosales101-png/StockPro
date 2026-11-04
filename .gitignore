@@ -1,0 +1,72 @@
+# ========================================================
+# .gitignore - StockPro
+# ========================================================
+
+# Dependencias
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+
+# Entorno y credenciales privadas
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+id_rsa*
+
+# Compilación y producción
+dist/
+dist-ssr/
+build/
+out/
+*.tsbuildinfo
+
+# Logs y archivos temporales
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Cachés y reportes de pruebas
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+coverage/
+.nyc_output/
+
+# Archivos de configuración local y del sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editores e IDEs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.bak
+

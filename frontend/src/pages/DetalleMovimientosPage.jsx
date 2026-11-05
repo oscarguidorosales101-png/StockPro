@@ -8,7 +8,9 @@ import {
   ArrowDownRight,
   SlidersHorizontal,
   Package,
-  Plus
+  Plus,
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { detalleMovimientoService } from '../services/detalleMovimientoService';
 import { movimientoService } from '../services/movimientoService';
@@ -164,7 +166,7 @@ export default function DetalleMovimientosPage({ addToast }) {
       <div className="page-header">
         <div className="page-header-info">
           <h2>Detalles de Movimientos</h2>
-          <p>Auditoría y consulta granular de los productos asociados a cada operación de inventario.</p>
+          <p>Consulta y desglose detallado de los productos registrados en cada operación de inventario.</p>
         </div>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={18} />
@@ -175,43 +177,81 @@ export default function DetalleMovimientosPage({ addToast }) {
       <div className="card">
         {/* Barra de Filtros */}
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por producto, cliente o # movimiento..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar por producto, cliente o # movimiento..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedMovimiento}
+                onChange={(e) => setSelectedMovimiento(e.target.value)}
+                aria-label="Filtrar por movimiento"
+              >
+                <option value="todos">Todos los movimientos</option>
+                {movimientos.map((m) => (
+                  <option key={m.id_movimiento} value={m.id_movimiento}>
+                    Movimiento #{m.id_movimiento} ({m.tipo.toUpperCase()})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedProducto}
+                onChange={(e) => setSelectedProducto(e.target.value)}
+                aria-label="Filtrar por producto"
+              >
+                <option value="todos">Todos los productos</option>
+                {productos.map((p) => (
+                  <option key={p.id_producto} value={p.id_producto}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {(searchTerm !== '' || selectedMovimiento !== 'todos' || selectedProducto !== 'todos') && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedMovimiento('todos');
+                  setSelectedProducto('todos');
+                }}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
 
-          <div className="filter-group">
-            <select
-              className="select-filter"
-              value={selectedMovimiento}
-              onChange={(e) => setSelectedMovimiento(e.target.value)}
-            >
-              <option value="todos">Todos los movimientos</option>
-              {movimientos.map((m) => (
-                <option key={m.id_movimiento} value={m.id_movimiento}>
-                  Movimiento #{m.id_movimiento} ({m.tipo.toUpperCase()})
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="select-filter"
-              value={selectedProducto}
-              onChange={(e) => setSelectedProducto(e.target.value)}
-            >
-              <option value="todos">Todos los productos</option>
-              {productos.map((p) => (
-                <option key={p.id_producto} value={p.id_producto}>
-                  {p.nombre}
-                </option>
-              ))}
-            </select>
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {filtered.length} de {detalles.length} líneas
+            </span>
           </div>
         </div>
 

@@ -14,7 +14,9 @@ import {
   XCircle,
   Calendar,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { clienteService } from '../services/clienteService';
 import Modal from '../components/Modal';
@@ -181,37 +183,75 @@ export default function ClientesPage({ addToast }) {
       <div className="card">
         {/* Filtros de consulta */}
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por nombre, cédula/identificación o correo..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar por nombre, identificación o correo..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedTipo}
+                onChange={(e) => setSelectedTipo(e.target.value)}
+                aria-label="Filtrar por tipo de cliente"
+              >
+                <option value="todos">Todos los tipos</option>
+                <option value="persona">Personas</option>
+                <option value="empresa">Empresas</option>
+              </select>
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedEstado}
+                onChange={(e) => setSelectedEstado(e.target.value)}
+                aria-label="Filtrar por estado"
+              >
+                <option value="todos">Todos los estados</option>
+                <option value="true">Activos</option>
+                <option value="false">Inactivos</option>
+              </select>
+            </div>
+
+            {(searchTerm !== '' || selectedTipo !== 'todos' || selectedEstado !== 'todos') && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedTipo('todos');
+                  setSelectedEstado('todos');
+                }}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
 
-          <div className="filter-group">
-            <select
-              className="select-filter"
-              value={selectedTipo}
-              onChange={(e) => setSelectedTipo(e.target.value)}
-            >
-              <option value="todos">Todos los tipos</option>
-              <option value="persona">Personas</option>
-              <option value="empresa">Empresas</option>
-            </select>
-
-            <select
-              className="select-filter"
-              value={selectedEstado}
-              onChange={(e) => setSelectedEstado(e.target.value)}
-            >
-              <option value="todos">Todos los estados</option>
-              <option value="true">Activos</option>
-              <option value="false">Inactivos</option>
-            </select>
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {clientes.length} cliente(s)
+            </span>
           </div>
         </div>
 

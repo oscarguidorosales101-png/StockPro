@@ -33,7 +33,7 @@ export default function ConfirmDialog({
             {message}
           </p>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Si existen otros registros dependientes asociados por integridad referencial, el sistema impedirá la eliminación.
+            Si el registro cuenta con operaciones u otros datos vinculados en el sistema, no podrá eliminarse para proteger la información.
           </p>
         </div>
       </div>

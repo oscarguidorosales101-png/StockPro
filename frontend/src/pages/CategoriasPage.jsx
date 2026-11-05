@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Boxes } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Boxes, Filter, RotateCcw, X } from 'lucide-react';
 import { categoriaService } from '../services/categoriaService';
 import Modal from '../components/Modal';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -8,6 +8,7 @@ export default function CategoriasPage({ addToast }) {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedEstado, setSelectedEstado] = useState('todos');
 
   // Modal create/edit
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -102,12 +103,25 @@ export default function CategoriasPage({ addToast }) {
     }
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSelectedEstado('todos');
+  };
+
+  const isFiltered = searchTerm !== '' || selectedEstado !== 'todos';
+
   const filtered = categorias.filter((c) => {
     const term = searchTerm.toLowerCase();
-    return (
+    const matchesSearch =
       c.nombre?.toLowerCase().includes(term) ||
-      c.descripcion?.toLowerCase().includes(term)
-    );
+      c.descripcion?.toLowerCase().includes(term);
+
+    const matchesEstado =
+      selectedEstado === 'todos' ||
+      (selectedEstado === 'activos' && Boolean(c.estado)) ||
+      (selectedEstado === 'inactivos' && !Boolean(c.estado));
+
+    return matchesSearch && matchesEstado;
   });
 
   return (
@@ -125,19 +139,59 @@ export default function CategoriasPage({ addToast }) {
 
       <div className="card">
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar categoría por nombre o descripción..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar categoría por nombre o descripción..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedEstado}
+                onChange={(e) => setSelectedEstado(e.target.value)}
+                aria-label="Filtrar por estado"
+              >
+                <option value="todos">Todos los estados</option>
+                <option value="activos">Solo activas</option>
+                <option value="inactivos">Solo inactivas</option>
+              </select>
+            </div>
+
+            {isFiltered && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={handleClearFilters}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Mostrando {filtered.length} de {categorias.length} categorías
-          </span>
+
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {filtered.length} de {categorias.length} categorías
+            </span>
+          </div>
         </div>
 
         <div className="table-container">

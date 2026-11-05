@@ -12,7 +12,9 @@ import {
   Calendar,
   User,
   Package,
-  AlertCircle
+  AlertCircle,
+  RotateCcw,
+  X
 } from 'lucide-react';
 import { movimientoService } from '../services/movimientoService';
 import { clienteService } from '../services/clienteService';
@@ -270,7 +272,7 @@ export default function MovimientosPage({ addToast }) {
       <div className="page-header">
         <div className="page-header-info">
           <h2>Movimientos de Inventario</h2>
-          <p>Control de entradas, salidas y ajustes de stock con actualización transaccional.</p>
+          <p>Control de entradas, salidas y ajustes de existencias con actualización automática e inmediata.</p>
         </div>
         <button className="btn btn-primary" onClick={handleOpenCreate}>
           <Plus size={18} />
@@ -281,42 +283,80 @@ export default function MovimientosPage({ addToast }) {
       <div className="card">
         {/* Barra de Filtros */}
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por ID, cliente u observación..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar por #ID, cliente u observación..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedTipo}
+                onChange={(e) => setSelectedTipo(e.target.value)}
+                aria-label="Filtrar por tipo de movimiento"
+              >
+                <option value="todos">Todos los tipos</option>
+                <option value="entrada">Entradas (+)</option>
+                <option value="salida">Salidas (-)</option>
+                <option value="ajuste">Ajustes Internos</option>
+              </select>
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedCliente}
+                onChange={(e) => setSelectedCliente(e.target.value)}
+                aria-label="Filtrar por cliente"
+              >
+                <option value="todos">Todos los clientes</option>
+                <option value="sin_cliente">Sin cliente asociado</option>
+                {clientes.map((c) => (
+                  <option key={c.id_cliente} value={c.id_cliente}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {(searchTerm !== '' || selectedTipo !== 'todos' || selectedCliente !== 'todos') && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedTipo('todos');
+                  setSelectedCliente('todos');
+                }}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
 
-          <div className="filter-group">
-            <select
-              className="select-filter"
-              value={selectedTipo}
-              onChange={(e) => setSelectedTipo(e.target.value)}
-            >
-              <option value="todos">Todos los tipos</option>
-              <option value="entrada">Entradas (+)</option>
-              <option value="salida">Salidas (-)</option>
-              <option value="ajuste">Ajustes Internos</option>
-            </select>
-
-            <select
-              className="select-filter"
-              value={selectedCliente}
-              onChange={(e) => setSelectedCliente(e.target.value)}
-            >
-              <option value="todos">Todos los clientes</option>
-              <option value="sin_cliente">Sin cliente asociado</option>
-              {clientes.map((c) => (
-                <option key={c.id_cliente} value={c.id_cliente}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {filtered.length} de {movimientos.length} movimientos
+            </span>
           </div>
         </div>
 

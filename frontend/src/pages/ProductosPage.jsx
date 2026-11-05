@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Package, AlertTriangle, Layers, Truck } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Package, AlertTriangle, Layers, Truck, RotateCcw, X } from 'lucide-react';
 import { productoService } from '../services/productoService';
 import { categoriaService } from '../services/categoriaService';
 import { proveedorService } from '../services/proveedorService';
@@ -149,6 +149,14 @@ export default function ProductosPage({ addToast }) {
     }
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategoria('todos');
+    setSelectedProveedor('todos');
+  };
+
+  const isFiltered = searchTerm !== '' || selectedCategoria !== 'todos' || selectedProveedor !== 'todos';
+
   const filtered = productos.filter((p) => {
     const term = searchTerm.toLowerCase();
     const matchesSearch =
@@ -178,43 +186,77 @@ export default function ProductosPage({ addToast }) {
 
       <div className="card">
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por nombre, categoría o proveedor..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar por nombre, categoría o proveedor..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedCategoria}
+                onChange={(e) => setSelectedCategoria(e.target.value)}
+                aria-label="Filtrar por categoría"
+              >
+                <option value="todos">Todas las categorías</option>
+                {categorias.map((c) => (
+                  <option key={c.id_categoria} value={c.id_categoria}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="select-filter-wrapper">
+              <select
+                className="select-filter"
+                value={selectedProveedor}
+                onChange={(e) => setSelectedProveedor(e.target.value)}
+                aria-label="Filtrar por proveedor"
+              >
+                <option value="todos">Todos los proveedores</option>
+                {proveedores.map((pr) => (
+                  <option key={pr.id_proveedor} value={pr.id_proveedor}>
+                    {pr.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {isFiltered && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={handleClearFilters}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
 
-          <div className="filter-group">
-            <select
-              className="select-filter"
-              value={selectedCategoria}
-              onChange={(e) => setSelectedCategoria(e.target.value)}
-            >
-              <option value="todos">Todas las categorías</option>
-              {categorias.map((c) => (
-                <option key={c.id_categoria} value={c.id_categoria}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="select-filter"
-              value={selectedProveedor}
-              onChange={(e) => setSelectedProveedor(e.target.value)}
-            >
-              <option value="todos">Todos los proveedores</option>
-              {proveedores.map((pr) => (
-                <option key={pr.id_proveedor} value={pr.id_proveedor}>
-                  {pr.nombre}
-                </option>
-              ))}
-            </select>
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {filtered.length} de {productos.length} productos
+            </span>
           </div>
         </div>
 

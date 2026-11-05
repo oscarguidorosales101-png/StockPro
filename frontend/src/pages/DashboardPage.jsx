@@ -125,13 +125,13 @@ export default function DashboardPage({ setActiveTab }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
+      <div className="dashboard-tables-grid">
         {/* Productos con menor stock */}
         <div className="card">
           <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <AlertTriangle size={18} color="var(--warning)" />
-              Alerta de Stock (≤ 15 uds)
+              Alerta de Stock 
             </h3>
             <button className="btn btn-sm btn-outline-purple" onClick={() => setActiveTab('productos')}>
               Ver todos

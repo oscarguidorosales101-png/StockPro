@@ -7,11 +7,23 @@ import {
   ArrowLeftRight,
   ClipboardList,
   LayoutDashboard,
-  ShieldCheck,
-  X
+  X,
+  PanelLeftClose,
+  PanelLeftOpen,
+  SlidersHorizontal,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) {
+export default function Sidebar({
+  activeTab,
+  setActiveTab,
+  isOpen,
+  setIsOpen,
+  preferences = {},
+  onUpdatePreferences,
+  onOpenCustomization
+}) {
   const navItems = [
     { id: 'dashboard', label: 'Panel Principal', icon: LayoutDashboard },
     { id: 'categorias', label: 'Categorías', icon: Boxes },
@@ -22,10 +34,25 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
     { id: 'detalles', label: 'Detalles Movimientos', icon: ClipboardList }
   ];
 
+  const hiddenModules = preferences.hiddenModules || [];
+  const visibleNavItems = navItems.filter((item) => !hiddenModules.includes(item.id));
+  const displayedItems = visibleNavItems.length > 0 ? visibleNavItems : navItems;
+
+  const isCollapsed = preferences.sidebarMode === 'collapsed';
+  const isHiddenDesktop = preferences.sidebarVisible === false;
+
   const handleSelect = (id) => {
     setActiveTab(id);
     if (window.innerWidth <= 900) {
       setIsOpen(false);
+    }
+  };
+
+  const toggleSidebarMode = () => {
+    if (onUpdatePreferences) {
+      onUpdatePreferences({
+        sidebarMode: isCollapsed ? 'expanded' : 'collapsed'
+      });
     }
   };
 
@@ -38,20 +65,38 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
         />
       )}
 
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      <aside
+        className={`sidebar ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''} ${isHiddenDesktop ? 'hidden-desktop' : ''}`}
+      >
         <div className="sidebar-header">
-          <div className="sidebar-logo-icon">
-            <Package size={22} />
+          <div className="sidebar-logo-icon" title="StockPro">
+            <Package size={20} />
           </div>
-          <div className="sidebar-brand">
-            <h1>StockPro</h1>
-            <p>Gestión Empresarial</p>
-          </div>
+
+          {!isCollapsed && (
+            <div className="sidebar-brand">
+              <h1>StockPro</h1>
+              <p>Gestión Empresarial</p>
+            </div>
+          )}
+
+          {/* Botón contraer/expandir para escritorio */}
+          <button
+            type="button"
+            className="sidebar-toggle-mode-btn desktop-only"
+            onClick={toggleSidebarMode}
+            title={isCollapsed ? 'Expandir menú lateral' : 'Contraer menú lateral'}
+          >
+            {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
+
+          {/* Botón cerrar para móvil */}
           {window.innerWidth <= 900 && (
             <button
-              className="modal-close-btn"
+              className="modal-close-btn mobile-only"
               style={{ marginLeft: 'auto' }}
               onClick={() => setIsOpen(false)}
+              aria-label="Cerrar menú"
             >
               <X size={20} />
             </button>
@@ -59,8 +104,9 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
         </div>
 
         <nav className="sidebar-nav">
-          <div className="nav-section-title">Módulos del Sistema</div>
-          {navItems.map((item) => {
+          {!isCollapsed && <div className="nav-section-title">Módulos del Sistema</div>}
+
+          {displayedItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
@@ -68,22 +114,35 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }) 
                 key={item.id}
                 className={`nav-item ${isActive ? 'active' : ''}`}
                 onClick={() => handleSelect(item.id)}
+                title={item.label}
               >
-                <Icon size={19} />
-                <span>{item.label}</span>
+                <Icon size={18} className="nav-item-icon" />
+                {!isCollapsed && <span className="nav-item-label">{item.label}</span>}
               </button>
             );
           })}
         </nav>
 
         <div className="sidebar-footer">
-          <div className="system-badge">
-            <div className="status-dot"></div>
-            <span>MySQL 8.0 &bull; Conectado</span>
+          <div className="sidebar-footer-row">
+            <div className="system-badge" title="Servicio empresarial activo y operativo">
+              <div className="status-dot"></div>
+              {!isCollapsed && <span>Sistema Operativo</span>}
+            </div>
+
+            {onOpenCustomization && (
+              <button
+                type="button"
+                className="sidebar-customize-btn"
+                onClick={onOpenCustomization}
+                title="Personalizar interfaz y módulos"
+              >
+                <SlidersHorizontal size={15} />
+              </button>
+            )}
           </div>
         </div>
       </aside>
     </>
   );
 }
-

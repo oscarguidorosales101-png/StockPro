@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Trash2, Truck, Mail, Phone, MapPin } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Truck, Mail, Phone, MapPin, RotateCcw, X } from 'lucide-react';
 import { proveedorService } from '../services/proveedorService';
 import Modal from '../components/Modal';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -104,6 +104,12 @@ export default function ProveedoresPage({ addToast }) {
     }
   };
 
+  const handleClearFilters = () => {
+    setSearchTerm('');
+  };
+
+  const isFiltered = searchTerm !== '';
+
   const filtered = proveedores.filter((p) => {
     const term = searchTerm.toLowerCase();
     return (
@@ -129,19 +135,46 @@ export default function ProveedoresPage({ addToast }) {
 
       <div className="card">
         <div className="filter-bar">
-          <div className="search-input-wrapper">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por nombre, correo, teléfono o dirección..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="filter-controls">
+            <div className="search-input-wrapper">
+              <Search size={16} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar por nombre, correo, teléfono o dirección..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={() => setSearchTerm('')}
+                  title="Borrar texto"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {isFiltered && (
+              <button
+                type="button"
+                className="btn-clear-filter"
+                onClick={handleClearFilters}
+                title="Restablecer filtros"
+              >
+                <RotateCcw size={13} />
+                Limpiar filtros
+              </button>
+            )}
           </div>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-            Mostrando {filtered.length} de {proveedores.length} proveedores
-          </span>
+
+          <div className="filter-actions">
+            <span className="filter-count-badge">
+              Mostrando {filtered.length} de {proveedores.length} proveedores
+            </span>
+          </div>
         </div>
 
         <div className="table-container">
